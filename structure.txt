@@ -1,0 +1,16 @@
+farm-management/
+│
+├── index.html
+├── crops.html
+├── livestock.html
+├── finance.html
+├── inventory.html
+├── reports.html
+├── settings.html
+├── login.html
+├── register.html
+├── styles.css
+├── firebase-config.js
+├── auth.js
+├── main.js
+└── README.md
