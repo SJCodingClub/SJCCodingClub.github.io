@@ -4,14 +4,16 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, si
 import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
 // Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_STORAGE_BUCKET",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
-};
+    apiKey: "AIzaSyCAhA9Ay-M8LF1lD-tRxfqaJeBl0_mu0UU",
+    authDomain: "farmmanegementsystem.firebaseapp.com",
+    projectId: "farmmanegementsystem",
+    storageBucket: "farmmanegementsystem.firebasestorage.app",
+    messagingSenderId: "420997470506",
+    appId: "1:420997470506:web:60be140deb449d6192e653",
+    measurementId: "G-RB8E8FZWY1"
+  };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
