@@ -1,16 +1,22 @@
 farm-management/
-│
-├── index.html
-├── crops.html
-├── livestock.html
-├── finance.html
-├── inventory.html
-├── reports.html
-├── settings.html
-├── login.html
-├── register.html
-├── styles.css
-├── firebase-config.js
-├── auth.js
-├── main.js
-└── README.md
+в”‚
+в”њв”Ђв”Ђ index.html
+в”њв”Ђв”Ђ crops.html
+в”њв”Ђв”Ђ livestock.html
+в”њв”Ђв”Ђ finance.html
+в”њв”Ђв”Ђ inventory.html
+в”њв”Ђв”Ђ reports.html
+в”њв”Ђв”Ђ settings.html
+в”њв”Ђв”Ђ login.html
+в”њв”Ђв”Ђ register.html
+в”њв”Ђв”Ђ styles.css
+в”њв”Ђв”Ђ firebase-config.js
+в”њв”Ђв”Ђ auth.js
+в”њв”Ђв”Ђ main.js
+в”њв”Ђв”Ђ crops.js
+в”њв”Ђв”Ђ livestock.js
+в”њв”Ђв”Ђ finance.js
+в”њв”Ђв”Ђ inventory.js
+в”њв”Ђв”Ђ reports.js
+в”њв”Ђв”Ђ settings.js
+в””в”Ђв”Ђ README.md
