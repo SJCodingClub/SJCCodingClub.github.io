@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farm Management - Settings</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">
+                <h2>Farm Manager</h2>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Dashboard</a></li>
+                <li><a href="crops.html">Crops</a></li>
+                <li><a href="livestock.html">Livestock</a></li>
+                <li><a href="finance.html">Finance</a></li>
+                <li><a href="inventory.html">Inventory</a></li>
+                <li><a href="reports.html">Reports</a></li>
+                <li class="active"><a href="settings.html">Settings</a></li>
+                <li><a href="#" id="logoutBtn">Logout</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <div class="header">
+                <h1>Settings</h1>
+                <div class="user-info">
+                    <span id="currentUser">Welcome</span>
+                    <span id="currentFarm">No farm selected</span>
+                </div>
+            </div>
+
+            <div class="content">
+                <div class="settings-section">
+                    <h2>Farm Management</h2>
+                    <div class="farms-list" id="farmsList">
+                        <p>No farms created yet.</p>
+                    </div>
+                    <button class="btn-primary" id="addFarmBtn">Add New Farm</button>
+                </div>
+
+                <div class="settings-section">
+                    <h2>User Profile</h2>
+                    <form id="profileForm">
+                        <div class="form-group">
+                            <label for="userName">Full Name</label>
+                            <input type="text" id="userName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="userEmail">Email Address</label>
+                            <input type="email" id="userEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="userPhone">Phone Number</label>
+                            <input type="tel" id="userPhone">
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">Update Profile</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="settings-section">
+                    <h2>Change Password</h2>
+                    <form id="passwordForm">
+                        <div class="form-group">
+                            <label for="currentPassword">Current Password</label>
+                            <input type="password" id="currentPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword">New Password</label>
+                            <input type="password" id="newPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm New Password</label>
+                            <input type="password" id="confirmPassword" required>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">Change Password</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Farm Modal -->
+                <div id="farmModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h2 id="farmModalTitle">Add New Farm</h2>
+                        <form id="farmForm">
+                            <input type="hidden" id="farmId">
+                            <div class="form-group">
+                                <label for="farmName">Farm Name</label>
+                                <input type="text" id="farmName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="farmAddress">Address</label>
+                                <input type="text" id="farmAddress">
+                            </div>
+                            <div class="form-group">
+                                <label for="farmSize">Total Size (acres)</label>
+                                <input type="number" id="farmSize" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label for="farmDescription">Description</label>
+                                <textarea id="farmDescription" rows="3"></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn-primary">Save Farm</button>
+                                <button type="button" class="btn-secondary" id="cancelFarmBtn">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="firebase-config.js"></script>
+    <script type="module" src="auth.js"></script>
+    <script type="module" src="settings.js"></script>
+</body>
+</html>
