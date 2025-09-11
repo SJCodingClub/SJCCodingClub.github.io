@@ -138,4 +138,126 @@ function openAnimalModal(animalId = null) {
     if (animalId) {
         // Editing existing animal
         title.textContent = 'Edit Animal';
-        document.getElementById('animalId').value = animalId
+        document.getElementById('animalId').value = animalId;
+        
+        // Load animal data
+        loadAnimalData(animalId);
+    } else {
+        // Adding new animal
+        title.textContent = 'Add New Animal';
+        document.getElementById('animalId').value = '';
+        document.getElementById('animalForm').reset();
+    }
+    
+    modal.style.display = 'block';
+}
+
+// Close animal modal
+function closeAnimalModal() {
+    document.getElementById('animalModal').style.display = 'none';
+}
+
+// Load animal data for editing
+async function loadAnimalData(animalId) {
+    try {
+        // In a real application, you would fetch the animal data from Firestore
+        const animalDoc = await getDocs(doc(db, 'livestock', animalId));
+        if (animalDoc.exists()) {
+            const animal = animalDoc.data();
+            
+            // Populate form fields
+            document.getElementById('animalType').value = animal.type || '';
+            document.getElementById('animalBreed').value = animal.breed || '';
+            document.getElementById('animalIdTag').value = animal.idTag || '';
+            document.getElementById('animalDob').value = animal.dob || '';
+            document.getElementById('animalGender').value = animal.gender || 'unknown';
+            document.getElementById('animalStatus').value = animal.status || 'active';
+            document.getElementById('animalNotes').value = animal.notes || '';
+        }
+    } catch (error) {
+        console.error('Error loading animal data:', error);
+        alert('Error loading animal data. Please try again.');
+    }
+}
+
+// Save animal to Firestore
+async function saveAnimal(farmId) {
+    const animalId = document.getElementById('animalId').value;
+    const animalData = {
+        type: document.getElementById('animalType').value,
+        breed: document.getElementById('animalBreed').value,
+        idTag: document.getElementById('animalIdTag').value,
+        dob: document.getElementById('animalDob').value,
+        gender: document.getElementById('animalGender').value,
+        status: document.getElementById('animalStatus').value,
+        notes: document.getElementById('animalNotes').value,
+        farmId: farmId,
+        updatedAt: new Date()
+    };
+    
+    try {
+        if (animalId) {
+            // Update existing animal
+            await updateDoc(doc(db, 'livestock', animalId), animalData);
+        } else {
+            // Add new animal
+            animalData.createdAt = new Date();
+            await addDoc(collection(db, 'livestock'), animalData);
+        }
+        
+        closeAnimalModal();
+    } catch (error) {
+        console.error('Error saving animal:', error);
+        alert('Error saving animal. Please try again.');
+    }
+}
+
+// View animal details
+function viewAnimal(animalId) {
+    // In a real application, you would show a detailed view of the animal
+    // This could include health records, breeding history, etc.
+    alert(`View animal details for ${animalId}`);
+}
+
+// Edit animal
+async function editAnimal(animalId) {
+    openAnimalModal(animalId);
+}
+
+// Delete animal
+async function deleteAnimal(animalId) {
+    if (!confirm('Are you sure you want to delete this animal? This action cannot be undone.')) {
+        return;
+    }
+    
+    try {
+        await deleteDoc(doc(db, 'livestock', animalId));
+    } catch (error) {
+        console.error('Error deleting animal:', error);
+        alert('Error deleting animal. Please try again.');
+    }
+}
+
+// Filter animals based on type, status and search term
+function filterAnimals() {
+    const typeFilter = document.getElementById('animalTypeFilter').value;
+    const statusFilter = document.getElementById('animalStatusFilter').value;
+    const searchTerm = document.getElementById('animalSearch').value.toLowerCase();
+    
+    const animalItems = document.querySelectorAll('.list-item');
+    
+    animalItems.forEach(item => {
+        const animalInfo = item.querySelector('.list-item-info').textContent.toLowerCase();
+        const animalName = item.querySelector('.list-item-info h3').textContent.toLowerCase();
+        
+        const typeMatch = typeFilter === 'all' || animalInfo.includes(typeFilter);
+        const statusMatch = statusFilter === 'all' || animalInfo.includes(statusFilter);
+        const searchMatch = animalName.includes(searchTerm) || animalInfo.includes(searchTerm);
+        
+        if (typeMatch && statusMatch && searchMatch) {
+            item.style.display = 'flex';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+}
