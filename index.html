@@ -3,68 +3,594 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Farm Management - Dashboard</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>FarmFlow - Modern Farm Management</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-storage-compat.js"></script>
+    <style>
+        .sidebar {
+            transition: all 0.3s ease;
+        }
+        .sidebar.collapsed {
+            width: 80px;
+        }
+        .sidebar.collapsed .nav-text {
+            display: none;
+        }
+        .main-content {
+            transition: all 0.3s ease;
+        }
+        .sidebar.collapsed + .main-content {
+            margin-left: 80px;
+        }
+        .crop-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .chart-container {
+            height: 300px;
+        }
+    </style>
 </head>
-<body>
-    <div class="container">
-        <div class="sidebar">
-            <div class="logo">
-                <h2>Farm Manager</h2>
+<body class="bg-gray-50">
+    <!-- Firebase Config -->
+    <script>
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+    </script>
+
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <div class="sidebar bg-green-800 text-white w-64 flex-shrink-0">
+            <div class="p-4 flex items-center justify-between border-b border-green-700">
+                <div class="flex items-center">
+                    <i data-feather="wind" class="w-8 h-8 text-green-300"></i>
+                    <span class="ml-2 text-xl font-bold">FarmFlow</span>
+                </div>
+                <button id="toggleSidebar" class="text-green-200 hover:text-white">
+                    <i data-feather="chevron-left"></i>
+                </button>
             </div>
-            <ul class="nav-links">
-                <li class="active"><a href="index.html">Dashboard</a></li>
-                <li><a href="crops.html">Crops</a></li>
-                <li><a href="livestock.html">Livestock</a></li>
-                <li><a href="finance.html">Finance</a></li>
-                <li><a href="inventory.html">Inventory</a></li>
-                <li><a href="reports.html">Reports</a></li>
-                <li><a href="settings.html">Settings</a></li>
-                <li><a href="#" id="logoutBtn">Logout</a></li>
-            </ul>
+            <nav class="p-4">
+                <div class="mb-8">
+                    <p class="text-green-300 uppercase text-xs font-semibold mb-2">Main</p>
+                    <a href="#" class="flex items-center py-2 px-3 rounded-lg bg-green-700 text-white mb-1">
+                        <i data-feather="home" class="w-5 h-5"></i>
+                        <span class="nav-text ml-3">Dashboard</span>
+                    </a>
+                    <a href="#" class="flex items-center py-2 px-3 rounded-lg text-green-200 hover:bg-green-700 hover:text-white mb-1">
+                        <i data-feather="calendar" class="w-5 h-5"></i>
+                        <span class="nav-text ml-3">Schedule</span>
+                    </a>
+                    <a href="#" class="flex items-center py-2 px-3 rounded-lg text-green-200 hover:bg-green-700 hover:text-white mb-1">
+                        <i data-feather="bar-chart-2" class="w-5 h-5"></i>
+                        <span class="nav-text ml-3">Analytics</span>
+                    </a>
+                </div>
+                <div class="mb-8">
+                    <p class="text-green-300 uppercase text-xs font-semibold mb-2">Management</p>
+                    <a href="#" class="flex items-center py-2 px-3 rounded-lg text-green-200 hover:bg-green-700 hover:text-white mb-1">
+                        <i data-feather="clipboard" class="w-5 h-5"></i>
+                        <span class="nav-text ml-3">Crops</span>
+                    </a>
+                    <a href="#" class="flex items-center py-2 px-3 rounded-lg text-green-200 hover:bg-green-700 hover:text-white mb-1">
+                        <i data-feather="database" class="w-5 h-5"></i>
+                        <span class="nav-text ml-3">Inventory</span>
+                    </a>
+                    <a href="#" class="flex items-center py-2 px-3 rounded-lg text-green-200 hover:bg-green-700 hover:text-white mb-1">
+                        <i data-feather="users" class="w-5 h-5"></i>
+                        <span class="nav-text ml-3">Workers</span>
+                    </a>
+                    <a href="#" class="flex items-center py-2 px-3 rounded-lg text-green-200 hover:bg-green-700 hover:text-white mb-1">
+                        <i data-feather="truck" class="w-5 h-5"></i>
+                        <span class="nav-text ml-3">Equipment</span>
+                    </a>
+                </div>
+                <div>
+                    <p class="text-green-300 uppercase text-xs font-semibold mb-2">Settings</p>
+                    <a href="#" class="flex items-center py-2 px-3 rounded-lg text-green-200 hover:bg-green-700 hover:text-white mb-1">
+                        <i data-feather="settings" class="w-5 h-5"></i>
+                        <span class="nav-text ml-3">System</span>
+                    </a>
+                    <a href="#" class="flex items-center py-2 px-3 rounded-lg text-green-200 hover:bg-green-700 hover:text-white mb-1">
+                        <i data-feather="user" class="w-5 h-5"></i>
+                        <span class="nav-text ml-3">Profile</span>
+                    </a>
+                    <a href="#" id="logoutBtn" class="flex items-center py-2 px-3 rounded-lg text-green-200 hover:bg-green-700 hover:text-white mb-1">
+                        <i data-feather="log-out" class="w-5 h-5"></i>
+                        <span class="nav-text ml-3">Logout</span>
+                    </a>
+                </div>
+            </nav>
         </div>
 
-        <div class="main-content">
-            <div class="header">
-                <h1>Dashboard</h1>
-                <div class="user-info">
-                    <span id="currentUser">Welcome</span>
-                    <span id="currentFarm">No farm selected</span>
+        <!-- Main Content -->
+        <div class="main-content flex-1 overflow-auto">
+            <!-- Top Navigation -->
+            <header class="bg-white shadow-sm">
+                <div class="flex items-center justify-between px-6 py-4">
+                    <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
+                    <div class="flex items-center space-x-4">
+                        <div class="relative">
+                            <i data-feather="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            <input type="text" placeholder="Search..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                        </div>
+                        <div class="relative">
+                            <button class="p-2 rounded-full hover:bg-gray-100">
+                                <i data-feather="bell" class="text-gray-600"></i>
+                                <span class="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
+                            </button>
+                        </div>
+                        <div class="flex items-center">
+                            <img src="http://static.photos/people/200x200/1" alt="User" class="w-8 h-8 rounded-full">
+                            <span class="ml-2 text-gray-700">John Doe</span>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </header>
 
-            <div class="dashboard-content">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h3>Active Fields</h3>
-                        <p id="activeFieldsCount">0</p>
+            <!-- Main Dashboard Content -->
+            <main class="p-6">
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Total Crops</p>
+                                <h3 class="text-2xl font-bold text-gray-800 mt-1">1,248</h3>
+                                <p class="text-green-500 text-sm mt-2 flex items-center">
+                                    <i data-feather="trending-up" class="w-4 h-4 mr-1"></i>
+                                    <span>12% from last month</span>
+                                </p>
+                            </div>
+                            <div class="p-3 rounded-full bg-green-100 text-green-600">
+                                <i data-feather="package" class="w-6 h-6"></i>
+                            </div>
+                        </div>
                     </div>
-                    <div class="stat-card">
-                        <h3>Total Livestock</h3>
-                        <p id="totalLivestockCount">0</p>
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Active Workers</p>
+                                <h3 class="text-2xl font-bold text-gray-800 mt-1">24</h3>
+                                <p class="text-green-500 text-sm mt-2 flex items-center">
+                                    <i data-feather="trending-up" class="w-4 h-4 mr-1"></i>
+                                    <span>2 new hires</span>
+                                </p>
+                            </div>
+                            <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                                <i data-feather="users" class="w-6 h-6"></i>
+                            </div>
+                        </div>
                     </div>
-                    <div class="stat-card">
-                        <h3>Monthly Expenses</h3>
-                        <p id="monthlyExpenses">$0.00</p>
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Harvest This Week</p>
+                                <h3 class="text-2xl font-bold text-gray-800 mt-1">48</h3>
+                                <p class="text-red-500 text-sm mt-2 flex items-center">
+                                    <i data-feather="alert-circle" class="w-4 h-4 mr-1"></i>
+                                    <span>3 delayed</span>
+                                </p>
+                            </div>
+                            <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+                                <i data-feather="sun" class="w-6 h-6"></i>
+                            </div>
+                        </div>
                     </div>
-                    <div class="stat-card">
-                        <h3>Monthly Revenue</h3>
-                        <p id="monthlyRevenue">$0.00</p>
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Equipment</p>
+                                <h3 class="text-2xl font-bold text-gray-800 mt-1">18</h3>
+                                <p class="text-red-500 text-sm mt-2 flex items-center">
+                                    <i data-feather="alert-circle" class="w-4 h-4 mr-1"></i>
+                                    <span>2 maintenance</span>
+                                </p>
+                            </div>
+                            <div class="p-3 rounded-full bg-purple-100 text-purple-600">
+                                <i data-feather="tool" class="w-6 h-6"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="recent-activities">
-                    <h2>Recent Activities</h2>
-                    <div class="activities-list" id="activitiesList">
-                        <p>No recent activities</p>
+                <!-- Charts and Recent Activity -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                    <!-- Yield Chart -->
+                    <div class="bg-white rounded-xl shadow-sm p-6 lg:col-span-2">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-lg font-semibold text-gray-800">Crop Yield Overview</h2>
+                            <select class="border border-gray-300 rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+                                <option>Last 7 days</option>
+                                <option>Last 30 days</option>
+                                <option selected>Last 90 days</option>
+                                <option>This year</option>
+                            </select>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="yieldChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Activity -->
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h2 class="text-lg font-semibold text-gray-800 mb-4">Recent Activity</h2>
+                        <div class="space-y-4">
+                            <div class="flex items-start">
+                                <div class="p-2 rounded-full bg-green-100 text-green-600 mr-3">
+                                    <i data-feather="check-circle" class="w-4 h-4"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-800">Harvest completed for Field A</p>
+                                    <p class="text-xs text-gray-500 mt-1">2 hours ago</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="p-2 rounded-full bg-blue-100 text-blue-600 mr-3">
+                                    <i data-feather="user-plus" class="w-4 h-4"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-800">New worker added</p>
+                                    <p class="text-xs text-gray-500 mt-1">5 hours ago</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="p-2 rounded-full bg-yellow-100 text-yellow-600 mr-3">
+                                    <i data-feather="alert-triangle" class="w-4 h-4"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-800">Irrigation system needs maintenance</p>
+                                    <p class="text-xs text-gray-500 mt-1">Yesterday</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="p-2 rounded-full bg-purple-100 text-purple-600 mr-3">
+                                    <i data-feather="truck" class="w-4 h-4"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-800">New equipment delivered</p>
+                                    <p class="text-xs text-gray-500 mt-1">2 days ago</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="p-2 rounded-full bg-red-100 text-red-600 mr-3">
+                                    <i data-feather="droplet" class="w-4 h-4"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-800">Low water level detected</p>
+                                    <p class="text-xs text-gray-500 mt-1">3 days ago</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+
+                <!-- Current Crops -->
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-lg font-semibold text-gray-800">Current Crops</h2>
+                        <button class="flex items-center text-sm text-green-600 hover:text-green-700">
+                            <i data-feather="plus" class="w-4 h-4 mr-1"></i>
+                            <span>Add New Crop</span>
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Crop Card 1 -->
+                        <div class="crop-card bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
+                            <div class="h-40 bg-cover bg-center" style="background-image: url('http://static.photos/agriculture/640x360/1');"></div>
+                            <div class="p-4">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h3 class="font-bold text-gray-800">Wheat Field</h3>
+                                        <p class="text-sm text-gray-500">Field A</p>
+                                    </div>
+                                    <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Growing</span>
+                                </div>
+                                <div class="mt-4 flex items-center justify-between">
+                                    <div>
+                                        <p class="text-xs text-gray-500">Planted</p>
+                                        <p class="text-sm font-medium">May 15, 2023</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500">Harvest</p>
+                                        <p class="text-sm font-medium">Aug 30, 2023</p>
+                                    </div>
+                                </div>
+                                <div class="mt-4">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="text-xs font-medium text-gray-700">Progress</span>
+                                        <span class="text-xs font-medium text-green-600">65%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-green-500 h-2 rounded-full" style="width: 65%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Crop Card 2 -->
+                        <div class="crop-card bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
+                            <div class="h-40 bg-cover bg-center" style="background-image: url('http://static.photos/agriculture/640x360/2');"></div>
+                            <div class="p-4">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h3 class="font-bold text-gray-800">Corn Field</h3>
+                                        <p class="text-sm text-gray-500">Field B</p>
+                                    </div>
+                                    <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">Irrigating</span>
+                                </div>
+                                <div class="mt-4 flex items-center justify-between">
+                                    <div>
+                                        <p class="text-xs text-gray-500">Planted</p>
+                                        <p class="text-sm font-medium">June 5, 2023</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500">Harvest</p>
+                                        <p class="text-sm font-medium">Sep 20, 2023</p>
+                                    </div>
+                                </div>
+                                <div class="mt-4">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="text-xs font-medium text-gray-700">Progress</span>
+                                        <span class="text-xs font-medium text-blue-600">42%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-blue-500 h-2 rounded-full" style="width: 42%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Crop Card 3 -->
+                        <div class="crop-card bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
+                            <div class="h-40 bg-cover bg-center" style="background-image: url('http://static.photos/agriculture/640x360/3');"></div>
+                            <div class="p-4">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h3 class="font-bold text-gray-800">Tomatoes</h3>
+                                        <p class="text-sm text-gray-500">Greenhouse 1</p>
+                                    </div>
+                                    <span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">Flowering</span>
+                                </div>
+                                <div class="mt-4 flex items-center justify-between">
+                                    <div>
+                                        <p class="text-xs text-gray-500">Planted</p>
+                                        <p class="text-sm font-medium">July 10, 2023</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs text-gray-500">Harvest</p>
+                                        <p class="text-sm font-medium">Sep 5, 2023</p>
+                                    </div>
+                                </div>
+                                <div class="mt-4">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="text-xs font-medium text-gray-700">Progress</span>
+                                        <span class="text-xs font-medium text-yellow-600">78%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-yellow-500 h-2 rounded-full" style="width: 78%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Tasks -->
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4">Upcoming Tasks</h2>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Task</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assigned To</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-10 w-10 bg-green-100 rounded-full flex items-center justify-center">
+                                                <i data-feather="droplet" class="text-green-600 w-5 h-5"></i>
+                                            </div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">Irrigation Check</div>
+                                                <div class="text-sm text-gray-500">Field A</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <img class="h-8 w-8 rounded-full" src="http://static.photos/people/200x200/2" alt="">
+                                            <div class="ml-2">
+                                                <div class="text-sm font-medium text-gray-900">Maria Garcia</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">Today</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <a href="#" class="text-green-600 hover:text-green-900">View</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                                <i data-feather="clipboard" class="text-blue-600 w-5 h-5"></i>
+                                            </div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">Soil Testing</div>
+                                                <div class="text-sm text-gray-500">Field C</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <img class="h-8 w-8 rounded-full" src="http://static.photos/people/200x200/3" alt="">
+                                            <div class="ml-2">
+                                                <div class="text-sm font-medium text-gray-900">James Wilson</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">Tomorrow</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Scheduled</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <a href="#" class="text-green-600 hover:text-green-900">View</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-10 w-10 bg-purple-100 rounded-full flex items-center justify-center">
+                                                <i data-feather="truck" class="text-purple-600 w-5 h-5"></i>
+                                            </div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">Equipment Maintenance</div>
+                                                <div class="text-sm text-gray-500">Tractor #5</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <img class="h-8 w-8 rounded-full" src="http://static.photos/people/200x200/4" alt="">
+                                            <div class="ml-2">
+                                                <div class="text-sm font-medium text-gray-900">Robert Johnson</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">Aug 15, 2023</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">Upcoming</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <a href="#" class="text-green-600 hover:text-green-900">View</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
         </div>
     </div>
 
-    <script type="module" src="firebase-config.js"></script>
-    <script type="module" src="auth.js"></script>
-    <script type="module" src="main.js"></script>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Toggle sidebar
+        document.getElementById('toggleSidebar').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('collapsed');
+        });
+
+        // Initialize Chart
+        const ctx = document.getElementById('yieldChart').getContext('2d');
+        const yieldChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                datasets: [
+                    {
+                        label: 'Wheat',
+                        data: [120, 190, 170, 210, 250, 280, 300],
+                        borderColor: '#10B981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'Corn',
+                        data: [80, 120, 150, 180, 220, 250, 270],
+                        borderColor: '#3B82F6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'Soybeans',
+                        data: [60, 90, 120, 150, 180, 210, 240],
+                        borderColor: '#F59E0B',
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value + ' kg';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Firebase Auth
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            firebase.auth().signOut().then(() => {
+                window.location.href = 'login.html';
+            }).catch((error) => {
+                console.error('Logout error:', error);
+            });
+        });
+
+        // Check auth state
+        firebase.auth().onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+            }
+        });
+    </script>
+    <script>AOS.init();</script>
+    <script>feather.replace();</script>
 </body>
 </html>
