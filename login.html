@@ -4,175 +4,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FarmFlow - Login</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
-    <script src="https://unpkg.com/feather-icons"></script>
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
-    <style>
-        .login-bg {
-            background-image: url('http://static.photos/agriculture/1200x630/5');
-            background-size: cover;
-            background-position: center;
-        }
-        .login-overlay {
-            background-color: rgba(16, 185, 129, 0.8);
-        }
-    </style>
+    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
-<body class="bg-gray-50 h-screen flex items-center justify-center">
-    <!-- Firebase Config -->
-    <script>
-        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyCAhA9Ay-M8LF1lD-tRxfqaJeBl0_mu0UU",
-  authDomain: "farmmanegementsystem.firebaseapp.com",
-  projectId: "farmmanegementsystem",
-  storageBucket: "farmmanegementsystem.firebasestorage.app",
-  messagingSenderId: "420997470506",
-  appId: "1:420997470506:web:60be140deb449d6192e653",
-  measurementId: "G-RB8E8FZWY1"
-};
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-    </script>
-
-    <div class="flex w-full max-w-6xl mx-4 rounded-xl overflow-hidden shadow-2xl">
-        <!-- Left Side - Image -->
-        <div class="hidden md:block md:w-1/2 login-bg relative">
-            <div class="login-overlay absolute inset-0 flex items-center justify-center p-8">
-                <div class="text-white text-center">
-                    <i data-feather="wind" class="w-16 h-16 mx-auto mb-4"></i>
-                    <h1 class="text-4xl font-bold mb-4">Welcome to FarmFlow</h1>
-                    <p class="text-xl">Your complete farm management solution</p>
-                </div>
+<body>
+    <div class="login-container">
+        <div class="login-image">
+            <div class="overlay">
+                <h1>Welcome to FarmFlow</h1>
+                <p>Your complete farm management solution</p>
             </div>
         </div>
         
-        <!-- Right Side - Login Form -->
-        <div class="w-full md:w-1/2 bg-white p-8 md:p-12 flex flex-col justify-center">
-            <div class="text-center mb-8 md:hidden">
-                <i data-feather="wind" class="w-12 h-12 mx-auto text-green-600 mb-2"></i>
-                <h1 class="text-2xl font-bold text-gray-800">FarmFlow</h1>
+        <div class="login-form-container">
+            <div class="logo">
+                <h1>FarmFlow</h1>
             </div>
             
-            <h2 class="text-2xl font-bold text-gray-800 mb-1">Sign In</h2>
-            <p class="text-gray-600 mb-8">Enter your credentials to access your farm dashboard</p>
-            
-            <form id="loginForm" class="space-y-6">
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i data-feather="mail" class="h-5 w-5 text-gray-400"></i>
-                        </div>
-                        <input type="email" id="email" name="email" required class="pl-10 block w-full border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="your@email.com">
-                    </div>
-                </div>
+            <div class="login-form">
+                <h2>Sign In</h2>
+                <p>Enter your credentials to access your farm dashboard</p>
                 
-                <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i data-feather="lock" class="h-5 w-5 text-gray-400"></i>
-                        </div>
-                        <input type="password" id="password" name="password" required class="pl-10 block w-full border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="••••••••">
-                    </div>
-                </div>
-                
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
-                        <label for="remember-me" class="ml-2 block text-sm text-gray-700">Remember me</label>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" required>
                     </div>
                     
-                    <div class="text-sm">
-                        <a href="#" class="font-medium text-green-600 hover:text-green-500">Forgot password?</a>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="password-input">
+                            <input type="password" id="password" required>
+                            <button type="button" class="toggle-password">
+                                <i class="far fa-eye"></i>
+                            </button>
+                        </div>
                     </div>
-                </div>
-                
-                <div>
-                    <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                        Sign In
-                    </button>
-                </div>
-            </form>
-            
-            <div class="mt-6">
-                <div class="relative">
-                    <div class="absolute inset-0 flex items-center">
-                        <div class="w-full border-t border-gray-300"></div>
-                    </div>
-                    <div class="relative flex justify-center text-sm">
-                        <span class="px-2 bg-white text-gray-500">Or continue with</span>
-                    </div>
-                </div>
-                
-                <div class="mt-6 grid grid-cols-2 gap-3">
-                    <button id="googleLogin" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                        <i data-feather="chrome" class="w-5 h-5 mr-2"></i>
-                        Google
-                    </button>
                     
-                    <button id="facebookLogin" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                        <i data-feather="facebook" class="w-5 h-5 mr-2"></i>
-                        Facebook
-                    </button>
+                    <div class="form-options">
+                        <div class="remember-me">
+                            <input type="checkbox" id="remember">
+                            <label for="remember">Remember me</label>
+                        </div>
+                        <a href="#" class="forgot-password">Forgot password?</a>
+                    </div>
+                    
+                    <button type="submit" class="login-btn">Sign In</button>
+                </form>
+                
+                <div class="social-login">
+                    <p>Or continue with</p>
+                    <div class="social-buttons">
+                        <button class="google-btn">
+                            <i class="fab fa-google"></i>
+                            <span>Google</span>
+                        </button>
+                        <button class="facebook-btn">
+                            <i class="fab fa-facebook-f"></i>
+                            <span>Facebook</span>
+                        </button>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="mt-8 text-center text-sm text-gray-600">
-                Don't have an account? <a href="#" class="font-medium text-green-600 hover:text-green-500">Request access</a>
+                
+                <div class="signup-link">
+                    <p>Don't have an account? <a href="#">Request access</a></p>
+                </div>
             </div>
         </div>
     </div>
 
-    <script>
-        // Login with email/password
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            
-            firebase.auth().signInWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    window.location.href = 'index.html';
-                })
-                .catch((error) => {
-                    alert(error.message);
-                });
-        });
-
-        // Google login
-        document.getElementById('googleLogin').addEventListener('click', function() {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            firebase.auth().signInWithPopup(provider)
-                .then((result) => {
-                    window.location.href = 'index.html';
-                }).catch((error) => {
-                    alert(error.message);
-                });
-        });
-
-        // Facebook login
-        document.getElementById('facebookLogin').addEventListener('click', function() {
-            const provider = new firebase.auth.FacebookAuthProvider();
-            firebase.auth().signInWithPopup(provider)
-                .then((result) => {
-                    window.location.href = 'index.html';
-                }).catch((error) => {
-                    alert(error.message);
-                });
-        });
-
-        // Check if user is already logged in
-        firebase.auth().onAuthStateChanged((user) => {
-            if (user) {
-                window.location.href = 'index.html';
-            }
-        });
-    </script>
-    <script>feather.replace();</script>
+    <script src="js/login.js"></script>
 </body>
 </html>
